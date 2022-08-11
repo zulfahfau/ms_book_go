@@ -3,16 +3,25 @@ package main
 import (
 	"log"
 	"net/http"
-	"LearnGoLang\src\handlers")
+	"os"
+	"root/handlers"
+)
 
 func main() {
 	//handlefunc -> takes func creates http - add to default server
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	})
-	http.HandleFunc("/goodbye", func(http.ResponseWriter, *http.Request) {
-		log.Println("Nice babay")
-	})
-	http.ListenAndServe(":9090", nil)
+	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	hh := handlers.NewHello(l)
+
+	sm := http.NewServeMux()
+	sm.Handle("/", hh)
+
+	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// })
+	// http.HandleFunc("/goodbye", func(http.ResponseWriter, *http.Request) {
+	// 	log.Println("Nice babay")
+	// })
+
+	http.ListenAndServe(":9090", sm)
 
 }
 

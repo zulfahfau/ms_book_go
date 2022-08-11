@@ -1,3 +1,3 @@
-module LearnGolang
+module root
 
 go 1.19
