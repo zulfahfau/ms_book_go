@@ -21,3 +21,7 @@ var bookList = []*Book{
 func GetBook() []*Book {
 	return bookList
 }
+
+// func AddBook()[]*Book{
+
+// }
