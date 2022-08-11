@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"root/handlers"
+	"time"
 )
 
 func main() {
@@ -23,8 +24,14 @@ func main() {
 	// 	log.Println("Nice babay")
 	// })
 
-	http.ListenAndServe(":9090", sm)
-
+	//make a server
+	s := &http.Server{
+		Addr: ":9090", Handler: sm,
+		IdleTimeout:  120 * time.Second,
+		ReadTimeout:  1 * time.Second,
+		WriteTimeout: 1 * time.Second,
+	}
+	s.ListenAndServe()
 }
 
 //MATERI VARIABLES
