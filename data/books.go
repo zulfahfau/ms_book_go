@@ -17,6 +17,11 @@ type Book struct {
 	DeleteOn    string  `json:"-"`
 }
 
+func (b *Book) FromJSON(r io.Reader) error {
+	e := json.NewDecoder(r)
+	return e.Decode(b)
+}
+
 type Books []*Book
 
 func (b *Books) ToJSON(w io.Writer) error {
@@ -33,7 +38,11 @@ var bookList = []*Book{
 	{ID: 2, Name: "BUMI", Description: "Made by TereLiye first", Price: 200000, SKU: "aaa13", CreatedOn: time.Now().UTC().String(), UpdatedOn: time.Now().UTC().String()},
 }
 
-func (b *Books) FromJSON(r io.Reader) error {
-	e := json.NewDecoder(r)
-	return e.Decode(b)
+func AddBook(b *Book) {
+	b.ID = getNextID()
+	bookList = append(bookList, b)
+}
+func getNextID() int {
+	lp := bookList[len(bookList)-1]
+	return lp.ID + 1
 }

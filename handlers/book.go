@@ -40,10 +40,11 @@ func (b *Books) getBooks(w http.ResponseWriter, r *http.Request) {
 func (b *Books) addBook(w http.ResponseWriter, r *http.Request) {
 	// POST book
 	log.Println("ini post")
-	book := &data.Books{}
+	book := &data.Book{}
 	err := book.FromJSON(r.Body)
 	if err != nil {
 		http.Error(w, "failed to unmarshal", http.StatusBadRequest)
 	}
 	log.Printf("Book :%#v", book)
+	data.AddBook(book)
 }
