@@ -1,40 +1,22 @@
 package handlers
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"root/data"
 )
 
-type Book struct {
+type Books struct {
 	log *log.Logger
 }
 
-func NewBook(log *log.Logger) *Book {
-	return &Book{log}
+func NewBooks(log *log.Logger) *Books {
+	return &Books{log}
 }
 
-func (b *Book) getBook(w http.ResponseWriter, r *http.Request) {
-	log.Println("ini get")
-	// GET PRODUCT
-	lp := data.GetBook()
-	//convert from list to json
-	d, err := json.Marshal(lp)
-	if err != nil {
-		http.Error(w, "faild to marshal", http.StatusInternalServerError)
-	}
-	w.Write(d)
-}
-
-func (b *Book) addBook(w http.ResponseWriter, r *http.Request) {
-	// POST book
-	log.Println("ini post")
-}
-
-func (b *Book) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (b *Books) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		b.getBook(w, r)
+		b.getBooks(w, r)
 		return
 	}
 	if r.Method == http.MethodPost {
@@ -42,4 +24,26 @@ func (b *Book) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusMethodNotAllowed)
+}
+
+func (b *Books) getBooks(w http.ResponseWriter, r *http.Request) {
+	log.Println("ini get")
+	// GET PRODUCT
+	lp := data.GetBooks()
+	//convert from list to json
+	err := lp.ToJSON(w)
+	if err != nil {
+		http.Error(w, "Unable to marshal json", http.StatusInternalServerError)
+	}
+}
+
+func (b *Books) addBook(w http.ResponseWriter, r *http.Request) {
+	// POST book
+	log.Println("ini post")
+	book := &data.Books{}
+	err := book.FromJSON(r.Body)
+	if err != nil {
+		http.Error(w, "failed to unmarshal", http.StatusBadRequest)
+	}
+	log.Printf("Book :%#v", book)
 }
