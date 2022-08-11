@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"root/handlers"
 	"time"
 )
@@ -31,7 +33,22 @@ func main() {
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,
 	}
-	s.ListenAndServe()
+	go func() {
+		err := s.ListenAndServe()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+	// s.ListenAndServe()
+	a := make(chan os.Signal, 1)
+	signal.Notify(a, os.Interrupt)
+	signal.Notify(a, os.Kill)
+
+	sig := <-a
+	log.Println("Recieved terminate, shutdown", sig)
+	//wait till complete then shutdown the server
+	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	s.Shutdown(tc)
 }
 
 //MATERI VARIABLES
